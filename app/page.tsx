@@ -63,7 +63,7 @@ export default function Home() {
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-block px-10 py-4 bg-[#FF5722] border-4 border-black text-black font-black text-xl uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all"
-        >
+        > 
           Chat via WhatsApp
         </a>
       </section>
