@@ -1,21 +1,31 @@
-import { useState, useEffect } from "react";
-import { Calendar, Clock, Loader2 } from "lucide-react";
-import { supabase } from "../lib/supabase";
+'use client';
 
-interface BookingProps {
-  selectedPackage: string;
-}
+import { useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
 
-export default function BookingForm({ selectedPackage }: BookingProps) {
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
-  const [bookedSlots, setBookedSlots] = useState<{ time: string; status: string }[]>([]);
+// Inisialisasi Supabase yang aman
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export default function BookingForm() {
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
   const [loading, setLoading] = useState(false);
+  const [statusMsg, setStatusMsg] = useState('');
+
+  // Form Data
+  const [formData, setFormData] = useState({
+    name: '',
+    whatsapp: '',
+    packageType: 'Product Photoshoot (Studio/Location)',
+    notes: ''
+  });
 
   // Dapatkan tanggal hari ini untuk membatasi input kalender agar tidak bisa pilih masa lalu
-  const today = new Date().toISOString().split("T")[0]; 
+  const today = new Date().toISOString().split("T")[0];
 
-  // Generate Jam dari 05:00 sampai 23:00
+  // Generate Jam dari 05:00 sampai 23:00 (Sesuai kode Anda sebelumnya)
   const generateTimeSlots = () => {
     const slots = [];
     for (let i = 5; i <= 23; i++) {
@@ -25,151 +35,152 @@ export default function BookingForm({ selectedPackage }: BookingProps) {
   };
   const timeSlots = generateTimeSlots();
 
-  // Fetch data dari database setiap kali user mengubah tanggal
-  useEffect(() => {
-    if (!selectedDate) return;
-    
-    const fetchSlots = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("bookings")
-        .select("booking_time, status, created_at")
-        .eq("booking_date", selectedDate);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-      if (data) {
-        // Logika expired: Jika pending dan sudah lewat 1 jam (60 menit), anggap "Free" kembali
-        const activeBookings = data.filter((b: any) => {
-          if (b.status === "booked") return true;
-          const bookingTime = new Date(b.created_at).getTime();
-          const now = new Date().getTime();
-          const diffInMinutes = Math.floor((now - bookingTime) / 60000);
-          return diffInMinutes < 60; // Hanya amankan slot selama 60 menit
-        });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatusMsg('');
 
-        const mappedSlots = activeBookings.map((b: any) => ({
-          time: b.booking_time,
-          status: b.status,
-        }));
-        setBookedSlots(mappedSlots);
-      }
+    if (!selectedDate || !selectedTime) {
+      setStatusMsg('⚠️ Pilih tanggal dan jam terlebih dahulu!');
       setLoading(false);
-    };
-
-    fetchSlots();
-  }, [selectedDate]);
-
-  const handleBookNow = async () => {
-    if (!selectedPackage || !selectedDate || !selectedTime) {
-      alert("Harap pilih Paket, Tanggal, dan Jam!");
       return;
     }
 
-    // 1. Simpan ke database dengan status "pending" (Lock Slot)
-    const { error } = await supabase.from("bookings").insert([
-      {
-        booking_date: selectedDate,
-        booking_time: selectedTime,
-        package_name: selectedPackage,
-        status: "pending",
-      },
-    ]);
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .insert([
+          {
+            date: selectedDate,
+            time: selectedTime,
+            name: formData.name,
+            whatsapp: formData.whatsapp,
+            package: formData.packageType,
+            notes: formData.notes
+          }
+        ]);
 
-    if (error) {
-      alert("Gagal mem-booking slot. Silakan coba lagi.");
-      return;
+      if (error) throw error;
+
+      setStatusMsg('✅ Booking Berhasil! Saya akan segera menghubungi Anda via WhatsApp.');
+      setFormData({ name: '', whatsapp: '', packageType: 'Product Photoshoot (Studio/Location)', notes: '' });
+      setSelectedDate('');
+      setSelectedTime('');
+    } catch (error: any) {
+      setStatusMsg('❌ Terjadi kesalahan: ' + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    // 2. Arahkan ke WhatsApp
-    const phoneNumber = "628XXXXXXXXXX"; // Nomor Anda
-    const message = `Halo, saya ingin booking:\n\nPaket: ${selectedPackage}\nTanggal: ${selectedDate}\nJam: ${selectedTime}\n\nSaya akan segera transfer DP.`;
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
-    
-    // Refresh slot agar terkunci di tampilan user
-    setSelectedTime("");
-    setSelectedDate(selectedDate); // Trigger useEffect ulang
   };
 
   return (
-    <section id="booking" className="bg-white p-6 md:p-10 border-2 border-black my-16 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-      <div className="border-b-2 border-black pb-4 mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-black uppercase tracking-tight">Pilih Jadwal Booking</h2>
-        <p className="text-black font-bold mt-2 bg-yellow-300 inline-block px-3 py-1 border border-black text-sm">
-          Slot dikunci selama 1 Jam untuk pembayaran DP.
-        </p>
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-black">
       
-      <div className="space-y-8">
-        {/* INPUT TANGGAL (Bisa pilih kapanpun ke depan) */}
-        <div className="space-y-2">
-          <label className="font-bold text-lg text-black flex items-center gap-2">
-            <Calendar className="w-5 h-5"/> Pilih Tanggal
-          </label>
+      {/* Input Nama */}
+      <div>
+        <label className="block font-bold mb-2 uppercase">Nama Lengkap</label>
+        <input 
+          type="text" 
+          name="name"
+          required
+          value={formData.name}
+          onChange={handleChange}
+          className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+          placeholder="Nama Klien atau Brand"
+        />
+      </div>
+
+      {/* Input WhatsApp */}
+      <div>
+        <label className="block font-bold mb-2 uppercase">Nomor WhatsApp</label>
+        <input 
+          type="tel" 
+          name="whatsapp"
+          required
+          value={formData.whatsapp}
+          onChange={handleChange}
+          className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+          placeholder="08123456789"
+        />
+      </div>
+
+      {/* Pilihan Paket */}
+      <div>
+        <label className="block font-bold mb-2 uppercase">Pilih Layanan</label>
+        <select 
+          name="packageType"
+          value={formData.packageType}
+          onChange={handleChange}
+          className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold"
+        >
+          <option value="Product Photoshoot (Studio/Location)">Product Photoshoot (Studio/Location)</option>
+          <option value="Video Shooting & Tracking">Video Shooting & Tracking</option>
+          <option value="Event Coverage (Semarang / Jakarta)">Event Coverage (Semarang / Jakarta)</option>
+          <option value="Custom Project">Custom Project / Lainnya</option>
+        </select>
+      </div>
+
+      {/* Tanggal & Waktu */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block font-bold mb-2 uppercase">Tanggal</label>
           <input 
             type="date" 
             min={today}
+            required
             value={selectedDate}
-            onChange={(e) => {
-              setSelectedDate(e.target.value);
-              setSelectedTime(""); // Reset jam jika ganti tanggal
-            }}
-            className="w-full md:w-1/2 p-4 border-2 border-black bg-gray-50 text-black font-bold outline-none focus:bg-white transition-colors cursor-pointer"
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold"
           />
         </div>
-
-        {/* INPUT JAM (05:00 - 23:00) */}
-        {selectedDate && (
-          <div className="space-y-4 pt-4 border-t-2 border-dashed border-gray-300">
-            <h3 className="font-bold text-lg text-black flex items-center gap-2">
-              <Clock className="w-5 h-5"/> Pilih Jam
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            </h3>
-            
-            <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3">
-              {timeSlots.map((time, i) => {
-                const dbSlot = bookedSlots.find((b: any) => b.time === time);
-                const isSelected = selectedTime === time;
-                
-                // Tentukan status UI
-                let btnStyle = "bg-white border-black text-black hover:bg-gray-100";
-                let statusText = "Free";
-                let isDisabled = false;
-
-                if (dbSlot?.status === "booked") {
-                  btnStyle = "bg-gray-200 border-gray-400 text-gray-500";
-                  statusText = "Booked";
-                  isDisabled = true;
-                } else if (dbSlot?.status === "pending") {
-                  btnStyle = "bg-yellow-100 border-yellow-500 text-yellow-700";
-                  statusText = "Pending";
-                  isDisabled = true;
-                } else if (isSelected) {
-                  btnStyle = "bg-black border-black text-white";
-                }
-
-                return (
-                  <button
-                    key={i}
-                    disabled={isDisabled}
-                    onClick={() => setSelectedTime(time)}
-                    className={`p-3 text-sm font-bold border-2 transition-colors flex flex-col items-center justify-center gap-1 ${btnStyle}`}
-                  >
-                    <span className="text-lg">{time}</span>
-                    <span className="text-[10px] uppercase">{statusText}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
+        <div>
+          <label className="block font-bold mb-2 uppercase">Waktu</label>
+          <select 
+            required
+            value={selectedTime}
+            onChange={(e) => setSelectedTime(e.target.value)}
+            className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold"
+          >
+            <option value="">-- Pilih Jam --</option>
+            {timeSlots.map((time) => (
+              <option key={time} value={time}>{time} WIB</option>
+            ))}
+          </select>
+        </div>
       </div>
 
+      {/* Catatan */}
+      <div>
+        <label className="block font-bold mb-2 uppercase">Detail / Catatan (Opsional)</label>
+        <textarea 
+          name="notes"
+          value={formData.notes}
+          onChange={handleChange}
+          rows={3}
+          className="w-full border-4 border-black p-3 bg-white focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+          placeholder="Ceritakan sedikit tentang produk atau konsep yang diinginkan..."
+        ></textarea>
+      </div>
+
+      {/* Status Pesan */}
+      {statusMsg && (
+        <div className={`p-4 border-4 border-black font-bold ${statusMsg.includes('Berhasil') ? 'bg-[#43B581] text-white' : 'bg-[#FF5722] text-black'}`}>
+          {statusMsg}
+        </div>
+      )}
+
+      {/* Tombol Submit */}
       <button 
-        onClick={handleBookNow} 
-        disabled={!selectedDate || !selectedTime || !selectedPackage}
-        className="mt-10 w-full py-5 bg-[#25D366] hover:bg-[#1DA851] disabled:bg-gray-300 disabled:cursor-not-allowed border-2 border-black text-black font-black text-lg uppercase transition-transform hover:-translate-y-1 active:translate-y-0"
+        type="submit" 
+        disabled={loading}
+        className="w-full py-4 mt-2 bg-[#FFE800] border-4 border-black text-black font-black text-xl uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50"
       >
-        Lock Slot & Pesan via WA
+        {loading ? 'Mengirim...' : 'Kirim Booking'}
       </button>
-    </section>
+    </form>
   );
 }
