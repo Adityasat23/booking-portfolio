@@ -1,28 +1,57 @@
-import { motion } from "framer-motion";
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function Hero() {
   return (
-    <section className="text-center space-y-6 flex flex-col items-center pt-32 pb-16">
-      <motion.h1 
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} 
-        className="text-4xl md:text-6xl font-medium text-neutral-900 dark:text-neutral-100 tracking-tight leading-[1.1]"
-      >
-        OUTDOOR GRADUATION <br/>
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
-          PORTRAIT SEMARANG
-        </span>
-      </motion.h1>
-      <motion.p 
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-        className="text-lg md:text-xl text-neutral-500 max-w-2xl"
-      >
-        Capture Your Best Campus Memories . Sesi foto wisuda outdoor premium langsung di spot ikonik kampusmu. Santai, dan pasti aesthetic.
-      </motion.p>
-      <div className="pt-4">
-         <a href="#booking" className="px-8 py-4 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-950 font-medium rounded-full hover:scale-105 transition-transform shadow-lg">
-            Booking Sekarang
-         </a>
+    <section className="min-h-[80vh] flex flex-col justify-center px-6 py-12 bg-[#faf9f6] border-b-4 border-black">
+      <div className="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        
+        {/* Bagian Teks */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-5xl md:text-7xl font-black uppercase leading-tight mb-4 text-black">
+            Aditya Satria Pratama
+          </h1>
+          <p className="text-xl md:text-2xl font-bold mb-8 text-gray-800">
+            Product, Video & Commercial Photographer.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            <Link 
+              href="/#booking-form" 
+              className="px-8 py-4 bg-[#FFE800] border-4 border-black text-black font-black text-lg uppercase text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all"
+            >
+              Book a Session
+            </Link>
+            <Link 
+              href="/portfolio" 
+              className="px-8 py-4 bg-white border-4 border-black text-black font-black text-lg uppercase text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all"
+            >
+              View Work
+            </Link>
+          </div>
+        </motion.div>
+        
+        {/* Bagian Foto Profil / Highlight */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="relative w-full"
+        >
+          <div className="aspect-[4/5] md:aspect-square bg-[#FF90E8] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative">
+            {/* Nanti ganti 'src' dengan foto profil atau karya terbaik Anda */}
+            <img 
+              src="/images/hero-profile.jpg" 
+              alt="Aditya Satria Pratama" 
+              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" 
+            />
+          </div>
+        </motion.div>
+
       </div>
     </section>
-  );
+  )
 }
