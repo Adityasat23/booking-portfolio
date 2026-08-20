@@ -8,13 +8,13 @@ export default function Hero() {
         {/* Bagian Teks (Kiri) */}
         <div className="flex flex-col">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase leading-tight mb-4 text-black">
-            FOTO BARENG MAS ADIT
+            DIFOTOIN ADIT
           </h1>
           <h2 className="text-xl md:text-2xl font-bold mb-6 text-black bg-[#FFE800] inline-block p-3 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-fit">
-            Foto wisuda yang santai, natural, dan nggak bikin bingung pose.
+            Foto wisuda santai, natural, dan gak bikin bingung pose.
           </h2>
           <p className="text-lg md:text-xl font-medium mb-8 text-gray-800 leading-relaxed max-w-xl">
-            Mau foto sendiri, bareng pasangan, keluarga, atau satu geng? Tinggal datang dan nikmati momennya. Nanti pose, angle, sampai spot foto bakal dibantu.
+            Mau foto sendiri, bareng pasangan, keluarga, atau satu geng? Tinggal dateng dan nikmati. Nanti pose, angle, sampai spot foto bakal dibantu.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -34,7 +34,7 @@ export default function Hero() {
 
           {/* Trust Bar */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-6 border-t-4 border-black font-bold text-base md:text-lg text-black">
-            <span className="flex items-center gap-2">🎓 250+ Wisudawan Difoto</span>
+            <span className="flex items-center gap-2">🎓 Fotografer Polines 3 Tahun</span>
             <span className="flex items-center gap-2">📸 Unlimited Shoot</span>
             <span className="flex items-center gap-2">⭐ File Original + Edit</span>
           </div>
