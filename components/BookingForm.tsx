@@ -1,86 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { useState } from 'react';
 
 export default function BookingForm() {
-  // Secara otomatis terpilih tanggal 12
   const [selectedDate, setSelectedDate] = useState('2026-09-12'); 
   const [selectedTime, setSelectedTime] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [statusMsg, setStatusMsg] = useState('');
-  const [bookedTimes, setBookedTimes] = useState<string[]>([]); 
-
   const [formData, setFormData] = useState({
     name: '', whatsapp: '', packageType: 'Personal Grad', notes: ''
   });
-
-  // Slot jam ala bioskop (Dari jam 07:00 sampai 17:00)
-  const timeSlots = [
-    "07:00", "08:00", "09:00", "10:00", "11:00", 
-    "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"
-  ];
-
-  // Mengecek jadwal yang sudah dibooking setiap klien mengganti hari
-  useEffect(() => {
-    const fetchBookedTimes = async () => {
-      if (!supabaseUrl) {
-        setStatusMsg('⚠️ Sistem belum terhubung ke database. Cek pengaturan Cloudflare Anda.');
-        return;
-      }
-      
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('time')
-        .eq('date', selectedDate);
-
-      if (data) {
-        setBookedTimes(data.map((b) => b.time.substring(0, 5))); // Ambil format HH:MM
-      }
-    };
-    fetchBookedTimes();
-  }, [selectedDate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setStatusMsg('');
-
-    if (!supabaseUrl) {
-      setStatusMsg('❌ Error: Supabase URL tidak ditemukan. (TypeError: Failed to fetch)');
-      setLoading(false); return;
-    }
 
     if (!selectedTime) {
-      setStatusMsg('⚠️ Pilih jam tayang terlebih dahulu!');
-      setLoading(false); return;
+      alert('⚠️ Pilih jam tayang terlebih dahulu!');
+      return;
     }
 
-    try {
-      const { error } = await supabase.from('bookings').insert([{
-        date: selectedDate, time: selectedTime, name: formData.name,
-        whatsapp: formData.whatsapp, package: formData.packageType, notes: formData.notes
-      }]);
+    // 1. Merangkai format tanggal agar rapi di WA
+    const tanggalRapi = selectedDate === '2026-09-12' 
+      ? 'Sabtu, 12 September 2026' 
+      : 'Minggu, 13 September 2026';
 
-      if (error) throw error;
+    // 2. Membuat template pesan WhatsApp otomatis
+    const message = `Halo Mas Aditya, saya ingin booking slot sesi wisuda! 🎓%0A%0A` +
+      `*Detail Pemesan:*%0A` +
+      `👤 Nama: ${formData.name}%0A` +
+      `📞 No. WA: ${formData.whatsapp}%0A` +
+      `📸 Paket: ${formData.packageType}%0A` +
+      `📅 Hari: ${tanggalRapi}%0A` +
+      `⏰ Jam: ${selectedTime} WIB%0A` +
+      `📍 Lokasi / Catatan: ${formData.notes || '-'}`;
 
-      setStatusMsg('✅ Tiket Slot Berhasil Dipesan! Saya akan chat Anda via WA untuk DP.');
-      setFormData({ name: '', whatsapp: '', packageType: 'Personal Grad', notes: '' });
-      setSelectedTime('');
-      setBookedTimes([...bookedTimes, selectedTime]);
-    } catch (error: any) {
-      setStatusMsg('❌ Terjadi kesalahan: ' + error.message);
-    } finally {
-      setLoading(false);
-    }
+    // 3. Mengarahkan ke nomor WA Anda (082225500898)
+    const waUrl = `https://wa.me/6282225500898?text=${message}`;
+    window.open(waUrl, '_blank');
   };
 
   return (
@@ -109,14 +67,22 @@ export default function BookingForm() {
             className="w-full border-4 border-black p-4 bg-white focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none font-black text-lg cursor-pointer disabled:bg-gray-300"
           >
             <option value="">-- Cek Kursi Tersedia --</option>
-            {timeSlots.map((time) => {
-              const isBooked = bookedTimes.includes(time) || bookedTimes.includes(`${time}:00`);
-              return (
-                <option key={time} value={time} disabled={isBooked}>
-                  {time} WIB {isBooked ? '❌ (SOLD OUT)' : '✅ (TERSEDIA)'}
-                </option>
-              );
-            })}
+            {/* 
+              CARA UPDATE MANUAL: 
+              Jika jam 08:00 sudah dibooking, cukup tambahkan kata "disabled" di dalam tag option-nya, 
+              dan ubah teksnya jadi SOLD OUT. Contohnya ada di jam 09:00 bawah ini.
+            */}
+            <option value="07:00">07:00 WIB ✅</option>
+            <option value="08:00">08:00 WIB ✅</option>
+            <option value="09:00" disabled>09:00 WIB ❌ (SOLD OUT)</option>
+            <option value="10:00">10:00 WIB ✅</option>
+            <option value="11:00">11:00 WIB ✅</option>
+            <option value="12:00">12:00 WIB ✅</option>
+            <option value="13:00">13:00 WIB ✅</option>
+            <option value="14:00">14:00 WIB ✅</option>
+            <option value="15:00">15:00 WIB ✅</option>
+            <option value="16:00">16:00 WIB ✅</option>
+            <option value="17:00">17:00 WIB ✅</option>
           </select>
         </div>
       </div>
@@ -146,14 +112,8 @@ export default function BookingForm() {
         <textarea name="notes" value={formData.notes} onChange={handleChange} rows={2} className="w-full border-4 border-black p-4 bg-white focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none font-bold" placeholder="Contoh: Undip Tembalang, titik kumpul di depan gedung..."></textarea>
       </div>
 
-      {statusMsg && (
-        <div className={`p-4 border-4 border-black font-black text-lg text-center ${statusMsg.includes('Berhasil') ? 'bg-[#43B581] text-white' : 'bg-[#FF5722] text-black'}`}>
-          {statusMsg}
-        </div>
-      )}
-
-      <button type="submit" disabled={loading} className="w-full py-5 mt-4 bg-black text-white border-4 border-black font-black text-2xl uppercase shadow-[8px_8px_0px_0px_#43B581] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50">
-        {loading ? 'MENGUNCI SLOT...' : 'AMANKAN SLOT SEKARANG'}
+      <button type="submit" className="w-full py-5 mt-4 bg-black text-white border-4 border-black font-black text-2xl uppercase shadow-[8px_8px_0px_0px_#43B581] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+        AMANKAN SLOT (VIA WHATSAPP)
       </button>
     </form>
   );
