@@ -17,7 +17,7 @@ export default function BookingForm() {
     e.preventDefault();
 
     if (!selectedTime) {
-      alert('⚠️ Pilih jam tayang terlebih dahulu!');
+      alert('⚠️ Pilih jam foto terlebih dahulu!');
       return;
     }
 
@@ -27,7 +27,7 @@ export default function BookingForm() {
       : 'Minggu, 13 September 2026';
 
     // 2. Membuat template pesan WhatsApp otomatis
-    const message = `Halo Mas Aditya, saya ingin booking slot sesi wisuda! 🎓%0A%0A` +
+    const message = `Halo Mas, saya ingin booking slot sesi wisuda! 🎓%0A%0A` +
       `*Detail Pemesan:*%0A` +
       `👤 Nama: ${formData.name}%0A` +
       `📞 No. WA: ${formData.whatsapp}%0A` +
@@ -46,35 +46,35 @@ export default function BookingForm() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block font-black mb-2 uppercase text-lg">Pilih Hari Tayang</label>
+          <label className="block font-black mb-2 uppercase text-lg">Pilih Hari Foto</label>
           <select 
             required 
             value={selectedDate} 
             onChange={(e) => setSelectedDate(e.target.value)} 
             className="w-full border-4 border-black p-4 bg-white focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none font-black text-lg cursor-pointer"
           >
-            <option value="2026-09-12">🎬 Sabtu, 12 September 2026</option>
-            <option value="2026-09-13">🎬 Minggu, 13 September 2026</option>
+            <option value="2026-09-12">Sabtu, 12 September 2026</option>
+            <option value="2026-09-13">Minggu, 13 September 2026</option>
           </select>
         </div>
         
         <div>
-          <label className="block font-black mb-2 uppercase text-lg">Pilih Jam Tayang</label>
+          <label className="block font-black mb-2 uppercase text-lg">Pilih Jam Foto</label>
           <select 
             required 
             value={selectedTime} 
             onChange={(e) => setSelectedTime(e.target.value)} 
             className="w-full border-4 border-black p-4 bg-white focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none font-black text-lg cursor-pointer disabled:bg-gray-300"
           >
-            <option value="">-- Cek Kursi Tersedia --</option>
+            <option value="">-- Cek Slot Tersedia --</option>
             {/* 
               CARA UPDATE MANUAL: 
               Jika jam 08:00 sudah dibooking, cukup tambahkan kata "disabled" di dalam tag option-nya, 
               dan ubah teksnya jadi SOLD OUT. Contohnya ada di jam 09:00 bawah ini.
             */}
-            <option value="07:00">07:00 WIB ✅</option>
+            <option value="07:00" disabled>07:00 WIB ❌ (SOLD OUT)</option>
             <option value="08:00">08:00 WIB ✅</option>
-            <option value="09:00" disabled>09:00 WIB ❌ (SOLD OUT)</option>
+            <option value="09:00">09:00 WIB </option>
             <option value="10:00">10:00 WIB ✅</option>
             <option value="11:00">11:00 WIB ✅</option>
             <option value="12:00">12:00 WIB ✅</option>
@@ -98,11 +98,11 @@ export default function BookingForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block font-black mb-2 uppercase">Nama Representatif</label>
+          <label className="block font-black mb-2 uppercase">Nama</label>
           <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full border-4 border-black p-4 bg-white focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none font-bold" placeholder="Nama Anda" />
         </div>
         <div>
-          <label className="block font-black mb-2 uppercase">Nomor WhatsApp Aktif</label>
+          <label className="block font-black mb-2 uppercase">Nomor WhatsApp</label>
           <input type="tel" name="whatsapp" required value={formData.whatsapp} onChange={handleChange} className="w-full border-4 border-black p-4 bg-white focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none font-bold" placeholder="082225500898" />
         </div>
       </div>
@@ -112,8 +112,11 @@ export default function BookingForm() {
         <textarea name="notes" value={formData.notes} onChange={handleChange} rows={2} className="w-full border-4 border-black p-4 bg-white focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none font-bold" placeholder="Contoh: Undip Tembalang, titik kumpul di depan gedung..."></textarea>
       </div>
 
-      <button type="submit" className="w-full py-5 mt-4 bg-black text-white border-4 border-black font-black text-2xl uppercase shadow-[8px_8px_0px_0px_#43B581] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
-        AMANKAN SLOT (VIA WHATSAPP)
+      <button 
+        type="submit" 
+        className="w-full py-5 min-h-[48px] mt-6 bg-[#FFE800] text-black border-4 border-black font-black text-2xl md:text-3xl uppercase shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[6px] hover:translate-y-[6px] transition-all"
+      >
+        LET'S GO FOTO BARENG
       </button>
     </form>
   );

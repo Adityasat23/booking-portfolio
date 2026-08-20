@@ -4,12 +4,32 @@ export default function PortfolioPage() {
   // Ini adalah link foto contoh. 
   // Nanti ganti URL 'src' ini dengan lokasi file Anda (misal: '/images/karya1.jpg')
   const portfolioImages = [
-    { id: 1, src: 'https://images.unsplash.com/photo-1527011045974-44b9a6156619?q=80&w=800&auto=format&fit=crop', alt: 'Product Shoot' },
-    { id: 2, src: 'https://images.unsplash.com/photo-1600607688066-890987f18a86?q=80&w=800&auto=format&fit=crop', alt: 'Studio Lighting' },
-    { id: 3, src: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=800&auto=format&fit=crop', alt: 'Product Detail' },
-    { id: 4, src: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=800&auto=format&fit=crop', alt: 'Laptop Setup' },
-    { id: 5, src: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?q=80&w=800&auto=format&fit=crop', alt: 'Commercial Video' },
-    { id: 6, src: 'https://images.unsplash.com/photo-1626784215001-3827f3c4db52?q=80&w=800&auto=format&fit=crop', alt: 'Event Coverage' },
+    { id: 1, src: '/images/1.webp', alt: 'Wisuda Session' },
+    { id: 2, src: '/images/2.webp', alt: 'Wisuda Session' },
+    { id: 3, src: '/images/3.webp', alt: 'Wisuda Session' },
+    { id: 4, src: '/images/4.webp', alt: 'Wisuda Session' },
+    { id: 5, src: '/images/5.webp', alt: 'Wisuda Session' },
+    { id: 6, src: '/images/6.webp', alt: 'Wisuda Session' },
+    { id: 7, src: '/images/7.webp', alt: 'Wisuda Session' },
+    { id: 8, src: '/images/8.webp', alt: 'Wisuda Session' },
+    { id: 9, src: '/images/9.webp', alt: 'Wisuda Session' },
+    { id: 10, src: '/images/10.webp', alt: 'Wisuda Session' },
+    { id: 11, src: '/images/11.webp', alt: 'Wisuda Session' },
+    { id: 12, src: '/images/12.webp', alt: 'Wisuda Session' },
+    { id: 13, src: '/images/13.webp', alt: 'Wisuda Session' },
+    { id: 14, src: '/images/14.webp', alt: 'Wisuda Session' },
+    { id: 15, src: '/images/15.webp', alt: 'Wisuda Session' },
+    { id: 16, src: '/images/16.webp', alt: 'Wisuda Session' },
+    { id: 17, src: '/images/17.webp', alt: 'Wisuda Session' },
+    { id: 18, src: '/images/18.webp', alt: 'Wisuda Session' },
+    { id: 19, src: '/images/19.webp', alt: 'Wisuda Session' },
+    { id: 20, src: '/images/20.webp', alt: 'Wisuda Session' },
+    { id: 21, src: '/images/21.webp', alt: 'Wisuda Session' },
+    { id: 22, src: '/images/22.webp', alt: 'Wisuda Session' },
+    { id: 23, src: '/images/23.webp', alt: 'Wisuda Session' },
+    { id: 24, src: '/images/24.webp', alt: 'Wisuda Session' },
+    { id: 25, src: '/images/25.webp', alt: 'Wisuda Session' },
+    { id: 26, src: '/images/26.webp', alt: 'Wisuda Session' },
   ];
 
   return (
