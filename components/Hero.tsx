@@ -45,16 +45,16 @@ export default function Hero() {
           {/* Kolom Kiri Grid */}
           <div className="col-span-1 flex flex-col gap-4">
             <div className="bg-[#FF90E8] border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-[4/5] overflow-hidden">
-              <img src="/images/10.webp" alt="Wisuda 1" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
+              <img src="/images/18.webp" alt="Wisuda 1" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
             </div>
             <div className="bg-[#43B581] border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-square overflow-hidden">
-              <img src="/images/11.webp" alt="Wisuda 2" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
+              <img src="/images/16.webp" alt="Wisuda 2" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
             </div>
           </div>
           {/* Kolom Kanan Grid */}
           <div className="col-span-1 flex items-center">
             <div className="bg-[#00E5FF] border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] aspect-[3/4] w-full overflow-hidden">
-              <img src="/images/12.webp" alt="Wisuda 3" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
+              <img src="/images/8.webp" alt="Wisuda 3" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" />
             </div>
           </div>
         </div>
