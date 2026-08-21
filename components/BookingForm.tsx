@@ -15,7 +15,7 @@ export default function BookingForm() {
   // Cara Update: Tinggal tambahkan jam yang laku di dalam kurung siku.
   // Contoh penulisan: ['07:00', '09:00', '13:00']
   const soldOutSlots: { [key: string]: string[] } = {
-    '2026-09-12': ['07:00'], // Jam yang laku di hari SABTU, 12 Sept
+    '2026-09-12': ['07:00','17:00','19.00'], // Jam yang laku di hari SABTU, 12 Sept
     '2026-09-13': [],        // Jam yang laku di hari MINGGU, 13 Sept
   };
 
@@ -33,7 +33,7 @@ export default function BookingForm() {
     e.preventDefault();
 
     if (!selectedTime) {
-      alert('⚠️ Pilih jam tayang terlebih dahulu!');
+      alert('⚠️ Pilih jam Foto terlebih dahulu!');
       return;
     }
 
@@ -59,7 +59,7 @@ export default function BookingForm() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block font-black mb-2 uppercase text-lg">Pilih Hari Tayang</label>
+          <label className="block font-black mb-2 uppercase text-lg">Pilih Hari Foto</label>
           <select 
             required 
             value={selectedDate} 
@@ -82,7 +82,7 @@ export default function BookingForm() {
             onChange={(e) => setSelectedTime(e.target.value)} 
             className="w-full border-4 border-black p-4 bg-white focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] outline-none font-black text-lg cursor-pointer disabled:bg-gray-300"
           >
-            <option value="">-- Cek Kursi Tersedia --</option>
+            <option value="">-- Cek Slot Tersedia --</option>
             
             {/* Logic memunculkan jam otomatis */}
             {allTimeSlots.map((time) => {
