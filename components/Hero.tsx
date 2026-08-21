@@ -8,7 +8,7 @@ export default function Hero() {
         {/* Bagian Teks (Kiri) */}
         <div className="flex flex-col">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase leading-tight mb-4 text-black">
-            DIFOTOIN ADIT
+            DIFOTOIN ADIT & KRISNA
           </h1>
           <h2 className="text-xl md:text-2xl font-bold mb-6 text-black bg-[#FFE800] inline-block p-3 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-fit">
             Foto wisuda santai, natural, dan gak bikin bingung pose.
